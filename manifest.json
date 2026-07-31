@@ -3,8 +3,8 @@
   "short_name": "Chess",
   "start_url": ".",
   "display": "standalone",
-  "background_color": "#1e1e2f",
-  "theme_color": "#1e1e2f",
+  "background_color": "#0e1016",
+  "theme_color": "#0e1016",
   "description": "Offline-ready chess with AI",
   "icons": [
     {
