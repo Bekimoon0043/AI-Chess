@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="description" content="A beautiful, offline-ready chess web app" />
+  <meta name="theme-color" content="#1e1e2f" />
+  <link rel="manifest" href="manifest.json" />
+  <title>AI Chess</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="icon" type="image/svg+xml" href="icons/chess.svg" />
+</head>
+<body class="dark">
+  <div id="app" class="app" role="main">
+    <!-- Header -->
+    <header class="header" role="banner">
+      <h1>AI Chess</h1>
+      <button id="menu-toggle" class="icon-btn" aria-label="Open menu" title="Menu">☰</button>
+    </header>
+
+    <!-- Game container -->
+    <main class="game-container">
+      <!-- Board wrap -->
+      <div class="board-wrapper">
+        <div id="board" class="board" role="grid" aria-label="Chess board"></div>
+        <div id="promotion-modal" class="modal hidden" aria-hidden="true">
+          <div class="modal-content">
+            <h3>Promote pawn</h3>
+            <div class="promo-choices" id="promo-choices"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Side panel -->
+      <aside class="side-panel">
+        <div class="status-bar">
+          <span id="game-status">White to move</span>
+        </div>
+        <div class="captured-pieces" id="captured-white">Captured: </div>
+        <div class="captured-pieces" id="captured-black">Captured: </div>
+        <div class="move-history" id="move-history"></div>
+        <div class="controls">
+          <button id="btn-undo" class="btn" title="Undo">↩ Undo</button>
+          <button id="btn-redo" class="btn" title="Redo">↪ Redo</button>
+          <button id="btn-flip" class="btn" title="Flip board">↕ Flip</button>
+          <button id="btn-new-game" class="btn primary" title="New game">New Game</button>
+        </div>
+      </aside>
+    </main>
+
+    <!-- Modals: Settings, About, Help, Game Over -->
+    <div id="settings-modal" class="modal hidden">
+      <div class="modal-content">
+        <h2>Settings</h2>
+        <label>Theme: <select id="theme-select"><option value="dark">Dark</option><option value="light">Light</option></select></label>
+        <label>Sound: <input type="checkbox" id="sound-toggle" checked /></label>
+        <label>Animation speed: <input type="range" id="anim-speed" min="0.5" max="2" step="0.1" value="1" /></label>
+        <label>Show legal moves: <input type="checkbox" id="show-legal" checked /></label>
+        <label>AI Difficulty: <select id="ai-difficulty"><option value="easy">Easy</option><option value="medium" selected>Medium</option><option value="hard">Hard</option></select></label>
+        <label>Mode: <select id="game-mode"><option value="pvp">Player vs Player</option><option value="pvc" selected>Player vs Computer</option></select></label>
+        <button id="close-settings" class="btn">Close</button>
+      </div>
+    </div>
+    <div id="about-modal" class="modal hidden">
+      <div class="modal-content">
+        <h2>About</h2><p>AI Chess – a fully offline Progressive Web App.</p>
+        <button id="close-about" class="btn">Close</button>
+      </div>
+    </div>
+    <div id="help-modal" class="modal hidden">
+      <div class="modal-content">
+        <h2>Help</h2><p>Drag pieces or click to move. Use the buttons to undo, flip, or start a new game.</p>
+        <button id="close-help" class="btn">Close</button>
+      </div>
+    </div>
+    <div id="game-over-modal" class="modal hidden">
+      <div class="modal-content">
+        <h2 id="game-result-text"></h2>
+        <button id="play-again" class="btn primary">Play Again</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/chess.js"></script>
+  <script src="js/ai.js"></script>
+  <script src="js/sound.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

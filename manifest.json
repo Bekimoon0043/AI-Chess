@@ -1,0 +1,17 @@
+{
+  "name": "AI Chess",
+  "short_name": "Chess",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#1e1e2f",
+  "theme_color": "#1e1e2f",
+  "description": "Offline-ready chess with AI",
+  "icons": [
+    {
+      "src": "icons/chess.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
