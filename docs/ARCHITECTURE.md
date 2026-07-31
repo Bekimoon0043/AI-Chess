@@ -32,16 +32,78 @@ AI-Chess/
 └── docs/                   # Architecture & process docs
 ```
 
-## Components
+## Module API Reference
 
-| Module | Responsibility |
-|--------|----------------|
-| `chess.js` | Pure rules: parse/to FEN, pseudo & legal moves, castling, en passant, promotion, check/mate/stalemate, draws |
-| `ai.js` | Best-move search (minimax + alpha-beta), difficulty → depth |
-| `ui.js` | DOM board, click & drag input, undo/redo, captures, move list, settings, game-over |
-| `sound.js` | Oscillator-based SFX (move, capture, check, mate, start) |
-| `app.js` | `DOMContentLoaded` → `UI.init`; register `sw.js` |
-| `sw.js` | Install/activate cache; serve offline shell |
+### `Chess` — Rules Engine (`js/chess.js`)
+
+| Method | Signature | Returns | Description |
+|--------|-----------|---------|-------------|
+| `INIT_FEN` | `string` | — | Starting position FEN string |
+| `PIECE_MAP` | `Object` | — | Unicode piece symbols map |
+| `parseFEN` | `(fen: string) => State` | `State` | Parse FEN to internal state object |
+| `toFEN` | `(state: State) => string` | `string` | Serialize state to FEN |
+| `getLegalMoves` | `(state, fromR, fromC) => Move[]` | `Move[]` | Legal moves from square, filtering check |
+| `movePiece` | `(state, fromR, fromC, toR, toC, promo?) => State\|null` | `State\|null` | Execute move with optional promotion piece |
+| `inCheck` | `(state, color) => boolean` | `boolean` | Is color's king in check? |
+| `isCheckmate` | `(state) => boolean` | `boolean` | Current turn is checkmated |
+| `isStalemate` | `(state) => boolean` | `boolean` | Current turn is stalemated |
+| `insufficientMaterial` | `(state) => boolean` | `boolean` | Draw by insufficient material |
+| `threefoldRepetition` | `(history) => boolean` | `boolean` | Draw by 3-fold repetition |
+| `isWhitePiece` | `(piece) => boolean` | `boolean` | Is piece white? |
+| `opponent` | `(turn) => string` | `string` | Get opposite color |
+
+**State Object:**
+```javascript
+{
+  grid: Array[8][8],        // null or piece char
+  turn: 'white' | 'black',
+  castling: { wK, wQ, bK, bQ },
+  enPassant: string | null,
+  halfMove: number,
+  fullMove: number
+}
+```
+
+### `AI` — Engine (`js/ai.js`)
+
+| Method | Signature | Returns | Description |
+|--------|-----------|---------|-------------|
+| `getBestMove` | `(state, difficulty) => Move\|null` | `Move\|null` | Best move for current turn |
+
+**Difficulty mapping:**
+- `easy`: depth 1 + random move shuffling
+- `medium`: depth 2
+- `hard`: depth 3
+
+### `UI` — Interface (`js/ui.js`)
+
+| Method | Description |
+|--------|-------------|
+| `init()` | Bootstrap game, bind controls, render initial board |
+
+**Internal state:**
+- `state`: Current game state from `Chess.parseFEN`
+- `history`: Stack of `{fen, move}` for undo
+- `redoStack`: Stack for redo
+- `selectedSquare`: Currently selected `{row, col}`
+- `legalMoves`: Array of legal destination squares
+- `settings`: Theme, sound, animation, legal dots, AI difficulty
+- `gameMode`: `'pvc'` (Player vs Computer) or `'pvp'` (Pass-and-Play)
+- `boardOrientation`: `'white'` or `'black'`
+
+### `Sound` — Audio (`js/sound.js`)
+
+| Method | Description |
+|--------|-------------|
+| `init()` | Create AudioContext (must be called after user gesture) |
+| `move()` | Standard move sound (600Hz sine, 100ms) |
+| `capture()` | Capture sound (200Hz triangle, 200ms) |
+| `check()` | Check alert (800Hz square, dual beep) |
+| `checkmate()` | Checkmate sound (100Hz sawtooth, 500ms) |
+| `promotion()` | Promotion fanfare (1000Hz sine, 300ms) |
+| `castling()` | Castling sound (500Hz triangle, 300ms) |
+| `gameStart()` | New game sound (400Hz sine, 400ms) |
+| `victory()` | Victory arpeggio (C-E-G, 200-300ms) |
 
 ## Data Flow
 
@@ -59,7 +121,7 @@ AI-Chess/
 - **Single source of truth for attacks** — `isSquareAttacked` used by check, castling, and legality
 - **Cache-first PWA** — static assets and engine files available offline
 
-## Performance Notes (accepted from review)
+## Performance Notes
 
 | Topic | Current | Target |
 |-------|---------|--------|

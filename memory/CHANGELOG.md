@@ -3,35 +3,31 @@
 ## [Unreleased]
 
 ### Added
-- DeepSeek review analysis: accepted vs rejected findings documented in `memory/KNOWLEDGE.md` and `docs/ARCHITECTURE.md`
-- Architecture documentation aligned with **implemented** vanilla JS modules (`js/chess.js`, `ai.js`, `ui.js`, `sound.js`, `app.js`)
-- Performance notes: main-thread AI limitation, planned Web Worker offload, timer cleanup guidance
-- Architecture documentation in `docs/ARCHITECTURE.md` (vanilla JS structure, components, data flow, design patterns)
-- Architecture Decision Records in `memory/DECISIONS.md` (client-side only, vanilla JS vs React, Web Worker, chess.js, PWA)
-- Technical knowledge base updates in `memory/KNOWLEDGE.md` (domain rules, APIs, lessons, resources)
-- Technical project blueprint (client-side SPA architecture, 6-phase roadmap, feature priority matrix, risk analysis)
-- Populated `memory/ROADMAP.md` with vision, milestones, timeline, and priorities from the plan
-- Populated `memory/TASKS.md` with Phase 1–6 task breakdown
-- Populated `memory/IDEAS.md` with post-MVP backlog and future considerations
+- Complete documentation suite: DEPLOYMENT.md, DEVELOPMENT.md, TESTING.md
+- API documentation in docs/ARCHITECTURE.md with method signatures
+- Browser support matrix in README.md
+- Master Context and Prompts memory files
+- Pre-release deployment checklist
 
 ### Changed
-- Adopted Claude architecture: plain HTML/CSS/JS module structure (supersedes earlier React/Vite consideration for MVP)
-- `docs/ARCHITECTURE.md` folder map corrected to match shipped files (not the earlier planned `engine/` / React layout)
-- `memory/KNOWLEDGE.md` updated with actual module paths and filtered code-review outcomes
+- README.md expanded with tech stack table, feature checklist, and known limitations
+- docs/ARCHITECTURE.md updated with full module API reference
 
-### Fixed
-- Clarified that en passant, underpromotion UI, stalemate, insufficient material, threefold, and 50-move are already implemented (contrary to DeepSeek assumptions)
-- Documented centralized `isSquareAttacked` — no duplicate attack logic
-
-## [0.1.0] - Initial
+## [0.1.0] - 2026-07-31
 
 ### Added
 - Repository scaffold: README, LICENSE (MIT), .gitignore
 - Memory system (`memory/`): MASTER_CONTEXT, ROADMAP, TASKS, DECISIONS, KNOWLEDGE, CHANGELOG, PROMPTS, IDEAS
 - Documentation stubs (`docs/`): ARCHITECTURE, DEPLOYMENT, DEVELOPMENT, TESTING
-- Empty source folders: `src/`, `assets/`, `css/`, `js/`
 - Full client-side chess PWA: rules engine, minimax AI, UI, sound, service worker
+- DeepSeek review analysis: accepted vs rejected findings documented
+- Architecture Decision Records in `memory/DECISIONS.md`
+- Technical knowledge base updates in `memory/KNOWLEDGE.md`
 
 ### Changed
+- Adopted vanilla JS architecture: plain HTML/CSS/JS module structure (supersedes earlier React/Vite consideration for MVP)
+- `docs/ARCHITECTURE.md` folder map corrected to match shipped files
 
 ### Fixed
+- Clarified that en passant, underpromotion UI, stalemate, insufficient material, threefold, and 50-move are already implemented
+- Documented centralized `isSquareAttacked` — no duplicate attack logic
