@@ -2,86 +2,132 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <meta name="description" content="A beautiful, offline-ready chess web app" />
-  <meta name="theme-color" content="#1e1e2f" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="description" content="A beautiful, offline-ready chess web app with AI opponent" />
+  <meta name="theme-color" content="#0f1117" media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color" content="#f7f7fb" media="(prefers-color-scheme: light)" />
+  <meta name="color-scheme" content="dark light" />
   <link rel="manifest" href="manifest.json" />
   <title>AI Chess</title>
   <link rel="stylesheet" href="css/styles.css" />
   <link rel="icon" type="image/svg+xml" href="icons/chess.svg" />
 </head>
 <body class="dark">
-  <div id="app" class="app" role="main">
-    <!-- Header -->
-    <header class="header" role="banner">
-      <h1>AI Chess</h1>
-      <button id="menu-toggle" class="icon-btn" aria-label="Open menu" title="Menu">☰</button>
-    </header>
 
-    <!-- Game container -->
-    <main class="game-container">
-      <!-- Board wrap -->
-      <div class="board-wrapper">
-        <div id="board" class="board" role="grid" aria-label="Chess board"></div>
-        <div id="promotion-modal" class="modal hidden" aria-hidden="true">
-          <div class="modal-content">
-            <h3>Promote pawn</h3>
-            <div class="promo-choices" id="promo-choices"></div>
-          </div>
+  <!-- ICON SPRITE -->
+  <svg style="display:none" aria-hidden="true">
+    <symbol id="i-sun" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.4M12 19.1v2.4M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M2.5 12h2.4M19.1 12h2.4M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7"/></g></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path fill="currentColor" d="M20.6 15.2A8.7 8.7 0 0 1 9 3.6a.9.9 0 0 0-1.1-1.2A10 10 0 1 0 21.9 16.4a.9.9 0 0 0-1.3-1.2Z"/></symbol>
+    <symbol id="i-gear" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 13.5a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.9 2.9l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V19.6a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.9-2.9l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H4.4a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.9-2.9l.1.1a1.7 1.7 0 0 0 1.9.3H10.6a1.7 1.7 0 0 0 1-1.5V4.4a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.9 2.9l-.1.1a1.7 1.7 0 0 0-.3 1.9V10.6a1.7 1.7 0 0 0 1.5 1H19.6a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></g></symbol>
+    <symbol id="i-undo" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M7 7 3 11l4 4M3 11h11a6 6 0 0 1 0 12h-2"/></symbol>
+    <symbol id="i-redo" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M17 7l4 4-4 4M21 11H10a6 6 0 0 0 0 12h2"/></symbol>
+    <symbol id="i-flip" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M17 2.5 21 6.5l-4 4M21 6.5H9a6.5 6.5 0 0 0-5.6 9.8M7 21.5 3 17.5l4-4M3 17.5h12a6.5 6.5 0 0 0 5.6-9.8"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-sound-on" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5v5h3.5L13 19V5L7.5 9.5H4Z"/><path d="M16.5 8.8a5 5 0 0 1 0 6.4M19.2 6.5a8.7 8.7 0 0 1 0 11"/></g></symbol>
+    <symbol id="i-sound-off" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5v5h3.5L13 19V5L7.5 9.5H4Z"/><path d="m16.5 9.5 5 5M21.5 9.5l-5 5"/></g></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.2"/><path d="M12 11v6"/><circle cx="12" cy="7.7" r="0.15" fill="currentColor" stroke-width="2.4"/></g></symbol>
+    <symbol id="i-help" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.2"/><path d="M9.3 9.3a2.7 2.7 0 1 1 3.9 2.4c-.9.5-1.2 1-1.2 2"/><circle cx="12" cy="16.8" r="0.15" fill="currentColor" stroke-width="2.4"/></g></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" d="M6 6l12 12M18 6 6 18"/></symbol>
+    <symbol id="i-trophy" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10v5a5 5 0 0 1-10 0V4Z"/><path d="M7 5H4a3 3 0 0 0 3 4M17 5h3a3 3 0 0 1-3 4"/><path d="M12 14v3M9 20.5h6M9.5 20.5c0-1.8.7-2.7 2.5-3.5 1.8.8 2.5 1.7 2.5 3.5"/></g></symbol>
+    <symbol id="i-crown" viewBox="0 0 24 24"><path fill="currentColor" d="M3 8.5 6.8 11l3.1-5.6L12 9l2.1-3.6 3.1 5.6L21 8.5 19.6 18H4.4L3 8.5Z"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path fill="currentColor" d="M8 5.5v13l11-6.5-11-6.5Z"/></symbol>
+    <symbol id="i-robot" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="8.5" width="14" height="10" rx="2.5"/><path d="M12 8.5V5M9.5 5h5"/><circle cx="9.3" cy="13.2" r="1" fill="currentColor" stroke="none"/><circle cx="14.7" cy="13.2" r="1" fill="currentColor" stroke="none"/><path d="M9 16.5h6M2.7 12v3M21.3 12v3"/></g></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="8" r="3"/><circle cx="16.3" cy="9.2" r="2.4"/><path d="M2.8 19c.6-3.2 2.9-5 5.7-5s5.1 1.8 5.7 5M14.5 14.5c2.3.2 4 1.7 4.5 4.5"/></g></symbol>
+  </svg>
+
+  <section id="start-screen" class="start-screen" aria-label="Welcome">
+    <div class="start-bg" aria-hidden="true">
+      <span class="float-piece p1">♞</span>
+      <span class="float-piece p2">♝</span>
+      <span class="float-piece p3">♜</span>
+      <span class="float-piece p4">♛</span>
+      <span class="float-piece p5">♟</span>
+      <span class="float-piece p6">♚</span>
+    </div>
+    <button id="home-theme-toggle" class="icon-btn theme-toggle start-theme-toggle" aria-label="Toggle color theme" title="Toggle theme">
+      <svg class="icon i-sun-icon"><use href="#i-sun"/></svg>
+      <svg class="icon i-moon-icon"><use href="#i-moon"/></svg>
+    </button>
+    <div class="start-card">
+      <div class="start-logo" aria-hidden="true"><svg class="icon icon-crown"><use href="#i-crown"/></svg></div>
+      <h1 class="start-title">AI Chess</h1>
+      <p class="start-tagline">Play a beautifully polished game of chess, offline & on any device.</p>
+      <div class="start-field">
+        <span class="start-field-label">Game mode</span>
+        <div class="segmented" id="start-mode-group" role="radiogroup" aria-label="Game mode">
+          <button type="button" class="segmented-opt active" data-value="pvc" role="radio" aria-checked="true"><svg class="icon"><use href="#i-robot"/></svg> Vs Computer</button>
+          <button type="button" class="segmented-opt" data-value="pvp" role="radio" aria-checked="false"><svg class="icon"><use href="#i-users"/></svg> Vs Player</button>
         </div>
       </div>
-
-      <!-- Side panel -->
-      <aside class="side-panel">
-        <div class="status-bar">
-          <span id="game-status">White to move</span>
+      <div class="start-field" id="start-difficulty-field">
+        <span class="start-field-label">AI difficulty</span>
+        <div class="segmented" id="start-difficulty-group" role="radiogroup" aria-label="AI difficulty">
+          <button type="button" class="segmented-opt" data-value="easy" role="radio" aria-checked="false">Easy</button>
+          <button type="button" class="segmented-opt active" data-value="medium" role="radio" aria-checked="true">Medium</button>
+          <button type="button" class="segmented-opt" data-value="hard" role="radio" aria-checked="false">Hard</button>
         </div>
-        <div class="captured-pieces" id="captured-white">Captured: </div>
-        <div class="captured-pieces" id="captured-black">Captured: </div>
-        <div class="move-history" id="move-history"></div>
+      </div>
+      <button id="btn-start-play" class="btn primary btn-lg btn-glow"><svg class="icon"><use href="#i-play"/></svg> Play</button>
+      <button id="start-help-link" class="link-btn">How to play</button>
+    </div>
+  </section>
+
+  <div id="app" class="app hidden" role="main">
+    <header class="header" role="banner">
+      <button id="btn-home" class="icon-btn brand-btn" aria-label="Back to home" title="Home"><svg class="icon icon-crown"><use href="#i-crown"/></svg><span class="brand-title">AI Chess</span></button>
+      <div class="header-actions">
+        <button id="theme-toggle" class="icon-btn theme-toggle" aria-label="Toggle color theme" title="Toggle theme"><svg class="icon i-sun-icon"><use href="#i-sun"/></svg><svg class="icon i-moon-icon"><use href="#i-moon"/></svg></button>
+        <button id="btn-help" class="icon-btn" aria-label="Help" title="Help"><svg class="icon"><use href="#i-help"/></svg></button>
+        <button id="btn-about" class="icon-btn" aria-label="About" title="About"><svg class="icon"><use href="#i-info"/></svg></button>
+        <button id="menu-toggle" class="icon-btn" aria-label="Open settings" title="Settings"><svg class="icon"><use href="#i-gear"/></svg></button>
+      </div>
+    </header>
+    <main class="game-container">
+      <div class="board-wrapper">
+        <div class="turn-indicator" id="turn-indicator"><span class="turn-dot"></span><span id="game-status">White to move</span><span class="ai-thinking" id="ai-thinking" aria-hidden="true"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span></div>
+        <div id="board" class="board" role="grid" aria-label="Chess board"></div>
+        <div id="promotion-modal" class="modal hidden" aria-hidden="true"><div class="modal-content promo-content"><h3>Promote pawn</h3><p class="modal-sub">Choose a piece for your pawn</p><div class="promo-choices" id="promo-choices"></div></div></div>
+      </div>
+      <aside class="side-panel">
+        <div class="panel-card captures-card">
+          <div class="captured-row"><span class="captured-label"><svg class="icon icon-sm"><use href="#i-crown"/></svg> White captured</span><div class="captured-pieces" id="captured-white"></div></div>
+          <div class="captured-row"><span class="captured-label"><svg class="icon icon-sm"><use href="#i-crown"/></svg> Black captured</span><div class="captured-pieces" id="captured-black"></div></div>
+        </div>
+        <div class="panel-card history-card"><h2 class="panel-title">Move history</h2><div class="move-history" id="move-history"></div></div>
         <div class="controls">
-          <button id="btn-undo" class="btn" title="Undo">↩ Undo</button>
-          <button id="btn-redo" class="btn" title="Redo">↪ Redo</button>
-          <button id="btn-flip" class="btn" title="Flip board">↕ Flip</button>
-          <button id="btn-new-game" class="btn primary" title="New game">New Game</button>
+          <button id="btn-undo" class="btn icon-only" title="Undo move" aria-label="Undo"><svg class="icon"><use href="#i-undo"/></svg></button>
+          <button id="btn-redo" class="btn icon-only" title="Redo move" aria-label="Redo"><svg class="icon"><use href="#i-redo"/></svg></button>
+          <button id="btn-flip" class="btn icon-only" title="Flip board" aria-label="Flip"><svg class="icon"><use href="#i-flip"/></svg></button>
+          <button id="btn-new-game" class="btn primary" title="New game"><svg class="icon"><use href="#i-plus"/></svg> New Game</button>
         </div>
       </aside>
     </main>
+    <footer class="app-footer"><span>AI Chess — plays fully offline</span></footer>
+  </div>
 
-    <!-- Modals: Settings, About, Help, Game Over -->
-    <div id="settings-modal" class="modal hidden">
-      <div class="modal-content">
-        <h2>Settings</h2>
-        <label>Theme: <select id="theme-select"><option value="dark">Dark</option><option value="light">Light</option></select></label>
-        <label>Sound: <input type="checkbox" id="sound-toggle" checked /></label>
-        <label>Animation speed: <input type="range" id="anim-speed" min="0.5" max="2" step="0.1" value="1" /></label>
-        <label>Show legal moves: <input type="checkbox" id="show-legal" checked /></label>
-        <label>AI Difficulty: <select id="ai-difficulty"><option value="easy">Easy</option><option value="medium" selected>Medium</option><option value="hard">Hard</option></select></label>
-        <label>Mode: <select id="game-mode"><option value="pvp">Player vs Player</option><option value="pvc" selected>Player vs Computer</option></select></label>
-        <button id="close-settings" class="btn">Close</button>
+  <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+
+  <div id="settings-modal" class="modal hidden" aria-hidden="true">
+    <div class="modal-content settings-content">
+      <div class="modal-header"><h2><svg class="icon"><use href="#i-gear"/></svg> Settings</h2><button id="close-settings" class="icon-btn modal-close" aria-label="Close"><svg class="icon"><use href="#i-close"/></svg></button></div>
+      <div class="settings-section"><h3 class="settings-heading">Appearance</h3><label class="settings-row"><span>Theme</span><select id="theme-select" class="select-control"><option value="dark">Dark</option><option value="light">Light</option></select></label></div>
+      <div class="settings-section"><h3 class="settings-heading">Gameplay</h3>
+        <label class="settings-row"><span>Sound effects</span><span class="switch"><input type="checkbox" id="sound-toggle" checked /><span class="switch-track"><span class="switch-thumb"></span></span></span></label>
+        <label class="settings-row"><span>Show legal moves</span><span class="switch"><input type="checkbox" id="show-legal" checked /><span class="switch-track"><span class="switch-thumb"></span></span></span></label>
+        <label class="settings-row settings-row-col"><span>Animation speed <output id="anim-speed-value">1.0×</output></span><input type="range" id="anim-speed" min="0.5" max="2" step="0.1" value="1" class="range-control" /></label>
       </div>
-    </div>
-    <div id="about-modal" class="modal hidden">
-      <div class="modal-content">
-        <h2>About</h2><p>AI Chess – a fully offline Progressive Web App.</p>
-        <button id="close-about" class="btn">Close</button>
+      <div class="settings-section"><h3 class="settings-heading">Opponent</h3>
+        <label class="settings-row"><span>AI difficulty</span><select id="ai-difficulty" class="select-control"><option value="easy">Easy</option><option value="medium" selected>Medium</option><option value="hard">Hard</option></select></label>
+        <label class="settings-row"><span>Mode</span><select id="game-mode" class="select-control"><option value="pvp">Player vs Player</option><option value="pvc" selected>Player vs Computer</option></select></label>
       </div>
-    </div>
-    <div id="help-modal" class="modal hidden">
-      <div class="modal-content">
-        <h2>Help</h2><p>Drag pieces or click to move. Use the buttons to undo, flip, or start a new game.</p>
-        <button id="close-help" class="btn">Close</button>
-      </div>
-    </div>
-    <div id="game-over-modal" class="modal hidden">
-      <div class="modal-content">
-        <h2 id="game-result-text"></h2>
-        <button id="play-again" class="btn primary">Play Again</button>
-      </div>
+      <button id="close-settings-btn" class="btn primary settings-done-btn">Done</button>
     </div>
   </div>
 
-  <!-- Scripts -->
+  <div id="about-modal" class="modal hidden" aria-hidden="true"><div class="modal-content"><div class="modal-header"><h2><svg class="icon"><use href="#i-info"/></svg> About</h2><button id="close-about-x" class="icon-btn modal-close" aria-label="Close"><svg class="icon"><use href="#i-close"/></svg></button></div><p>AI Chess is a fully offline Progressive Web App — no servers, no tracking, just chess.</p><button id="close-about" class="btn">Close</button></div></div>
+  <div id="help-modal" class="modal hidden" aria-hidden="true"><div class="modal-content"><div class="modal-header"><h2><svg class="icon"><use href="#i-help"/></svg> How to play</h2><button id="close-help-x" class="icon-btn modal-close" aria-label="Close"><svg class="icon"><use href="#i-close"/></svg></button></div><ul class="help-list"><li>Tap or click a piece to see its legal moves.</li><li>Drag a piece, or tap a highlighted square, to move.</li><li>Use Undo / Redo to step through the game.</li><li>Flip the board to view from the other side.</li><li>Open Settings to change theme, sound, difficulty and mode.</li></ul><button id="close-help" class="btn">Got it</button></div></div>
+  <div id="game-over-modal" class="modal hidden" aria-hidden="true"><div class="modal-content game-over-content"><div class="confetti-layer" id="confetti-layer" aria-hidden="true"></div><div class="result-icon" id="result-icon"><svg class="icon"><use href="#i-trophy"/></svg></div><h2 id="game-result-text">Checkmate! White wins.</h2><p class="result-sub" id="game-result-sub">Great game.</p><div class="result-stats" id="result-stats"></div><div class="game-over-actions"><button id="play-again" class="btn primary btn-lg"><svg class="icon"><use href="#i-plus"/></svg> Play Again</button><button id="game-over-settings" class="btn"><svg class="icon"><use href="#i-gear"/></svg> Settings</button></div></div></div>
+
   <script src="js/chess.js"></script>
   <script src="js/ai.js"></script>
   <script src="js/sound.js"></script>
