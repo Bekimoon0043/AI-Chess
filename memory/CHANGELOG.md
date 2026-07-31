@@ -3,31 +3,30 @@
 ## [Unreleased]
 
 ### Added
+- **Modern UI redesign** — start/home screen, design tokens, segmented controls, polished modals
+- Confetti on checkmate, AI thinking indicator, result stats
+- Service Worker cache bumped to `chess-v2`
+- Updated app icon gradient SVG
 - Complete documentation suite: DEPLOYMENT.md, DEVELOPMENT.md, TESTING.md
 - API documentation in docs/ARCHITECTURE.md with method signatures
 - Browser support matrix in README.md
 - Master Context and Prompts memory files
-- Pre-release deployment checklist
 
 ### Changed
+- `index.html` — start screen, icon sprite, improved settings/help/about/game-over modals
+- `css/styles.css` — full design system (tokens, dark/light, start card, panels)
+- `js/ui.js` — enterGame/showStartScreen, theme toggle, confetti, segmented mode/difficulty
 - README.md expanded with tech stack table, feature checklist, and known limitations
-- docs/ARCHITECTURE.md updated with full module API reference
 
 ## [0.1.0] - 2026-07-31
 
 ### Added
 - Repository scaffold: README, LICENSE (MIT), .gitignore
-- Memory system (`memory/`): MASTER_CONTEXT, ROADMAP, TASKS, DECISIONS, KNOWLEDGE, CHANGELOG, PROMPTS, IDEAS
-- Documentation stubs (`docs/`): ARCHITECTURE, DEPLOYMENT, DEVELOPMENT, TESTING
+- Memory system and documentation
 - Full client-side chess PWA: rules engine, minimax AI, UI, sound, service worker
-- DeepSeek review analysis: accepted vs rejected findings documented
-- Architecture Decision Records in `memory/DECISIONS.md`
-- Technical knowledge base updates in `memory/KNOWLEDGE.md`
 
 ### Changed
-- Adopted vanilla JS architecture: plain HTML/CSS/JS module structure (supersedes earlier React/Vite consideration for MVP)
-- `docs/ARCHITECTURE.md` folder map corrected to match shipped files
+- Adopted vanilla JS architecture (supersedes earlier React/Vite consideration for MVP)
 
 ### Fixed
-- Clarified that en passant, underpromotion UI, stalemate, insufficient material, threefold, and 50-move are already implemented
 - Documented centralized `isSquareAttacked` — no duplicate attack logic
