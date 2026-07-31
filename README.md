@@ -1,2 +1,11 @@
 # AI-Chess
-AI Chess project with memory system
+
+## Overview
+
+## Getting Started
+
+## Features
+
+## Contributing
+
+## License
